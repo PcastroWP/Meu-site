@@ -172,7 +172,7 @@
             const checkboxes = document.querySelectorAll('#result input[type="checkbox"]:checked');
             const selectedChoices = Array.from(checkboxes).map(cb => cb.value);
             if (selectedChoices.length > 0) {
-                fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
+                fetch('https://script.google.com/macros/s/1qOmpC943DoXh-oIXYhZ1Z9OnQMSs7G0NLEbfSm_cAAj4-D20bdndG-Jw/exec', {
                     method: 'POST',
                     body: JSON.stringify({choices: selectedChoices}),
                     headers: {

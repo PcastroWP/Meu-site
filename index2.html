@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Reuniões</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .content {
+            width: 50%;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        p {
+            font-size: 16px;
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"], button {
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #result {
+            width: 100%;
+            margin-top: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            column-count: 2;
+            column-gap: 30px;
+            box-sizing: border-box;
+        }
+        label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        label input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 2px solid #ccc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        label input[type="checkbox"]:checked {
+            background-color: #3498db;
+            border-color: #2980b9;
+        }
+        label input[type="checkbox"]:hover {
+            border-color: #2980b9;
+        }
+        button#send {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            background-color: #2ecc71;
+            box-sizing: border-box;
+        }
+        button#send:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Busca de Reuniões de Participantes</h1>
+        <p>Digite o nome de um participante ou firma para visualizar as reuniões indicadas:</p>
+        <input type="text" id="participantName" placeholder="Nome do participante ou firma" list="suggestions" oninput="updateSuggestions()" onkeypress="handleKeyPress(event)">
+        <datalist id="suggestions"></datalist>
+        <button onclick="searchMeetings()">Buscar Reuniões</button>
+
+        <div id="result"></div>
+        <button id="send" onclick="sendChoices()">Send Choices</button>
+    </div>
+
+    <script>
+        // Adicione o seu dicionário de dados aqui
+        const meetingsData = {
+          "Participante 1": ["Match 1", "Match 2"],
+          "Participante 2": ["Match 3", "Match 4"]
+        };
+
+        const allNames = [...new Set([
+            ...Object.keys(meetingsData).map(firma => firma.toLowerCase()),
+            ...Object.values(meetingsData).flat().map(match => match.toLowerCase())
+        ])];
+
+        function updateSuggestions() {
+            const input = document.getElementById("participantName").value.toLowerCase();
+            const suggestions = document.getElementById("suggestions");
+            suggestions.innerHTML = "";
+
+            if (input.length > 0) {
+                const filteredNames = allNames.filter(name => name.includes(input));
+
+                filteredNames.forEach(name => {
+                    const option = document.createElement("option");
+                    option.value = name;
+                    suggestions.appendChild(option);
+                });
+            }
+        }
+
+        function searchMeetings() {
+            const inputName = document.getElementById("participantName").value.trim().toLowerCase();
+            const resultBox = document.getElementById("result");
+            resultBox.innerHTML = "";
+            let result = [];
+
+            if (meetingsData[inputName]) {
+                result = meetingsData[inputName];
+            } else {
+                for (const [firma, matches] of Object.entries(meetingsData)) {
+                    if (matches.some(match => match.toLowerCase().includes(inputName))) {
+                        result.push(firma);
+                    }
+                }
+            }
+
+            if (result.length > 0) {
+                resultBox.innerHTML = result.map((item, index) => `
+                    <label>
+                        <input type="checkbox" value="${item}" id="choice${index}"> ${index + 1}. ${item}
+                    </label>
+                `).join("");
+            } else {
+                resultBox.innerHTML = "Nenhuma reunião encontrada para o nome informado.";
+            }
+        }
+
+        function sendChoices() {
+            const checkboxes = document.querySelectorAll('#result input[type="checkbox"]:checked');
+            const selectedChoices = Array.from(checkboxes).map(cb => cb.value);
+            if (selectedChoices.length > 0) {
+                alert('Escolhas enviadas: ' + selectedChoices.join(", "));
+            } else {
+                alert('Nenhuma escolha selecionada.');
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                searchMeetings();
+            }
+        }
+    </script>
+</body>
+</html>

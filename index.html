@@ -202,12 +202,12 @@ function sendChoices() {
     const selectedChoices = Array.from(checkboxes).map(cb => cb.value);
 
     if (selectedChoices.length > 0) {
-        fetch('https://script.google.com/macros/s/AKfycbww0apLDEzvKBFRVcpceR27UC8GNA88vZ4Em0A-9ElCrNR7pz3NbMwGAOB5xPlr4OUs6g/exec', {
+        fetch('https://script.google.com/macros/s/1qOmpC943DoXh-oIXYhZ1Z9OnQMSs7G0NLEbfSm_cAAj4-D20bdndG-Jw/exec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({choices: selectedChoices}),
+            body: JSON.stringify({choices: selectedChoices}),  // Enviando o corpo da requisição em JSON
         })
         .then(response => {
             if (!response.ok) {
@@ -229,6 +229,7 @@ function sendChoices() {
         alert('Nenhuma escolha selecionada.');
     }
 }
+
 
         function handleKeyPress(event) {
             if (event.key === "Enter") {

@@ -145,7 +145,8 @@
         // Adicione o seu dicionário de dados aqui
         const meetingsData = {
           "Participante 1": ["Match 1", "Match 2"],
-          "Participante 2": ["Match 3", "Match 4"]
+          "Participante 2": ["Match 3", "Match 4"],
+          "Participante 3": ["Match 5", "Match 6"],    
         };
 
         const allNames = [...new Set([
@@ -201,14 +202,19 @@ function sendChoices() {
     const selectedChoices = Array.from(checkboxes).map(cb => cb.value);
 
     if (selectedChoices.length > 0) {
-        fetch('https://script.google.com/a/macros/brazilclimatesummit.com/s/AKfycbww0apLDEzvKBFRVcpceR27UC8GNA88vZ4Em0A-9ElCrNR7pz3NbMwGAOB5xPlr4OUs6g/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbww0apLDEzvKBFRVcpceR27UC8GNA88vZ4Em0A-9ElCrNR7pz3NbMwGAOB5xPlr4OUs6g/exec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({choices: selectedChoices}),
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.status === 'success') {
                 alert('Escolhas enviadas com sucesso!');
@@ -217,7 +223,7 @@ function sendChoices() {
             }
         })
         .catch(error => {
-            alert('Erro na requisição: ' + error);
+            alert('Erro na requisição: ' + error.message);
         });
     } else {
         alert('Nenhuma escolha selecionada.');

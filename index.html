@@ -196,15 +196,33 @@
             }
         }
 
-        function sendChoices() {
-            const checkboxes = document.querySelectorAll('#result input[type="checkbox"]:checked');
-            const selectedChoices = Array.from(checkboxes).map(cb => cb.value);
-            if (selectedChoices.length > 0) {
-                alert('Escolhas enviadas: ' + selectedChoices.join(", "));
+function sendChoices() {
+    const checkboxes = document.querySelectorAll('#result input[type="checkbox"]:checked');
+    const selectedChoices = Array.from(checkboxes).map(cb => cb.value);
+
+    if (selectedChoices.length > 0) {
+        fetch('https://script.google.com/a/macros/brazilclimatesummit.com/s/AKfycbzSIyv5I49q2nT4-ujqi74nsiLc4AUiP9CTliWAMXla3HuUGZpTst2ROfIg-QKJtCY8PA/exec', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({choices: selectedChoices}),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Escolhas enviadas com sucesso!');
             } else {
-                alert('Nenhuma escolha selecionada.');
+                alert('Erro ao enviar escolhas: ' + data.message);
             }
-        }
+        })
+        .catch(error => {
+            alert('Erro na requisição: ' + error);
+        });
+    } else {
+        alert('Nenhuma escolha selecionada.');
+    }
+}
 
         function handleKeyPress(event) {
             if (event.key === "Enter") {
